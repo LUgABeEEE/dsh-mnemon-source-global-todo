@@ -1,0 +1,15 @@
+# A Source bundle. It declares `inject: ['mnemonMemory']`, so without dsh-mnemon the plugin
+# simply never applies — no error, no row in any View, nothing to clean up.
+- insert:
+    - id: mnemon-source-global-todo
+      name: dsh-mnemon-source-global-todo
+      config:
+        # '' means $DSH_HOME/global-todo/todos.json — the same file the panel writes.
+        storePath: ''
+        # How many open items a turn-level projection may show. 0 turns projection off and
+        # leaves only the search route.
+        projectLimit: 5
+        # Characters kept from each title in the projection.
+        titleLimit: 80
+        # How many items the search route may return in one call.
+        searchLimit: 20
