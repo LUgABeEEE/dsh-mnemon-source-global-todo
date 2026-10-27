@@ -21,6 +21,8 @@
 
 ```sh
 dsh plugin --profile <profile> add dsh-mnemon-source-global-todo
+# 还没上 npm 之前，从 GitHub 装：
+dsh plugin --profile <profile> add github:LUgABeEEE/dsh-mnemon-source-global-todo
 ```
 
 1. 装完**重启宿主**；

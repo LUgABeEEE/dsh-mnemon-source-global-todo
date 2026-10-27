@@ -1,0 +1,36 @@
+name: Publish
+
+# Trusted Publishing over OIDC, the same shape as dsh-global-todo: no npm token lives in this
+# repository. npm requires the package to exist before a trusted publisher can be registered,
+# so the very first release is published by hand; every release after it comes from here.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: github.repository == 'LUgABeEEE/dsh-mnemon-source-global-todo'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22.19.0'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      # Trusted publishing needs npm 11.5.1 or later; Node 22.19 ships npm 10.9.3.
+      - name: Install an npm that speaks OIDC
+        run: npm install --global npm@^11.5.1
+      # The tests need the memory plugin's public SDK for their imports. It is a peer dependency,
+      # so CI installs it without touching the package's own dependency list.
+      - name: Peer for the tests
+        run: npm install --no-save dsh-mnemon@^0.5.34
+      - name: Verify
+        run: npm test
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
