@@ -217,3 +217,22 @@ test('a rewrite is picked up: the cache is keyed by the file, not by time', asyn
     await s.cleanup()
   }
 })
+
+test('a record waiting in the inbox is not offered as work', () => {
+  // dsh-global-todo 0.22.0 parks unconfirmed agent records in the inbox. Recall must not offer
+  // them: a projection that says "here is what is open" while including 69 records nobody has
+  // confirmed is the same noise, arriving through a different door.
+  const now = Date.parse('2026-10-30T04:00:00Z')
+  const todos = [
+    { id: 't-list', title: '在清单里', status: 'open', tags: [], createdAt: now },
+    { id: 't-inbox', title: '等在收件箱', status: 'open', tags: ['inbox'], inboxReason: 'no-due', createdAt: now },
+    { id: 't-done', title: '做完了', status: 'done', tags: [], createdAt: now },
+    { id: 't-doing', title: '在做', status: 'doing', tags: [], createdAt: now },
+  ]
+  const open = openItems(todos, now)
+  assert.deepEqual(open.map((entry) => entry.todo.id).sort(), ['t-doing', 't-list'])
+  // The filter is on the tag, so a store written before inboxReason existed is handled too.
+  const legacy = openItems([{ id: 't-old', title: '旧收件箱', status: 'open', tags: ['Inbox'] }], now)
+  assert.deepEqual(legacy, [])
+})
+
