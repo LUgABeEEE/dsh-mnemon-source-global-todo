@@ -32,5 +32,20 @@ jobs:
         run: npm install --no-save dsh-mnemon@^0.5.34
       - name: Verify
         run: npm test
+      # A tag whose version is already on the registry is not an error: it is how a tag gets
+      # created after a manual first publish, and how a re-run after a partial failure stays
+      # green instead of failing with "cannot publish over the previously published version".
+      - name: Is this version already published?
+        id: presence
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if npm view "dsh-mnemon-source-global-todo@$version" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$version is already on the registry; nothing to publish."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::$version is not on the registry yet; publishing."
+          fi
       - name: Publish with provenance
+        if: steps.presence.outputs.published == 'false'
         run: npm publish --provenance --access public
