@@ -21,8 +21,9 @@
 ## 安装
 
 ```sh
+# 从 npm 装（0.1.1 起可用）
 dsh plugin --profile <profile> add dsh-mnemon-source-global-todo
-# 还没上 npm 之前，从 GitHub 装：
+# 或者直接从 GitHub 装（跟着 main 走）
 dsh plugin --profile <profile> add github:LUgABeEEE/dsh-mnemon-source-global-todo
 ```
 
