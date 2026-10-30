@@ -1,6 +1,6 @@
 {
   "name": "dsh-mnemon-source-global-todo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Expose dsh-global-todo's open items to dsh-mnemon as a read-only memory Source.",
   "type": "module",
   "license": "MIT",
